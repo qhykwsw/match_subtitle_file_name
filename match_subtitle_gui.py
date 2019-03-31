@@ -24,13 +24,13 @@ class Example(QMainWindow):
 		self.statusBar()
 
 		# 打开文件夹
-		openFile = QAction(QIcon('open.png'), 'Open dir', self)
+		openFile = QAction(QIcon('icon/open.png'), 'Open dir', self)
 		openFile.setShortcut('Ctrl+O')
 		openFile.setStatusTip('Open dir')
 		openFile.triggered.connect(self.showDialog)
 
 		# 退出程序
-		exitAction = QAction(QIcon('exit.png'), 'Exit', self)      
+		exitAction = QAction(QIcon('icon/exit.png'), 'Exit', self)      
 		exitAction.setShortcut('Ctrl+Q')
 		exitAction.setStatusTip('Exit')
 		exitAction.triggered.connect(qApp.quit)
