@@ -3,6 +3,9 @@
 
 import re
 import os
+import time
+
+start = time.time()
 
 top = "C:\\Files\\Videos"
 # top =  "E:\\视频"
@@ -11,20 +14,23 @@ pttn = re.compile(r'[s]\d+[e]\d+')
 
 match_num = 0
 no_match_num = 0
+has_match_num = 0
 
 for path, dirlist, filelist in os.walk(top):
-	videos = [name for name in filelist if name.endswith(('mkv','mp4','avi','rmvb','rm','flv','3gp'))]
-	subtitles = [name for name in filelist if name.endswith(('ass','srt','sup','ssa'))]
+	videos = [name for name in filelist if name.endswith(('.mkv','.mp4','.avi','.rmvb','.rm','.flv','.3gp'))]
+	subtitles = [name for name in filelist if name.endswith(('.ass','.srt','.sup','.ssa'))]
 	# 如果只有一个字幕文件，则默认为电影，直接匹配同文件夹下的视频文件
 	if len(subtitles) == len(videos) == 1:
 		subtitle = subtitles[0]
 		video = videos[0]
 		if os.path.splitext(subtitle)[0] == os.path.splitext(video)[0]:
+			has_match_num += 1
 			continue
 		else:
 			subtitle_oldname = os.path.join(path, subtitle)
 			subtitle_newname = os.path.join(path, os.path.splitext(video)[0] + os.path.splitext(subtitle)[1])
 			os.rename(subtitle_oldname, subtitle_newname)
+			print(f"{subtitle_oldname}匹配成功。")
 			match_num += 1
 	else:
 		for subtitle in subtitles:
@@ -39,16 +45,20 @@ for path, dirlist, filelist in os.walk(top):
 				# 尝试匹配对应的video
 				if episode in video.lower():
 					if os.path.splitext(subtitle)[0] == os.path.splitext(video)[0]:
+						has_match_num += 1
 						break
 					else:
 						subtitle_oldname = os.path.join(path, subtitle)
 						subtitle_newname = os.path.join(path, os.path.splitext(video)[0] + os.path.splitext(subtitle)[1])
 						# 将字幕重命名
 						os.rename(subtitle_oldname, subtitle_newname)
+						print(f"{subtitle_oldname}匹配成功。")
 						match_num += 1
 						break
 			else:
 				print(f"'{os.path.join(path, subtitle)}'未找到与之匹配的视频文件")
 				no_match_num += 1
 
-print(f"共有{match_num}个字幕完成匹配, 仍有{no_match_num}个字幕未匹配")
+print(f"原本有{has_match_num}个字幕已经匹配，本次有{match_num}个字幕完成匹配, 仍有{no_match_num}个字幕未匹配。")
+end = time.time()
+print(f"共耗时{round(end-start, 5)}秒")
